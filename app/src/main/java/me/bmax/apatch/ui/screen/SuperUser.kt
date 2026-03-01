@@ -1,5 +1,6 @@
 package me.bmax.apatch.ui.screen
 
+import android.content.pm.PackageManager
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -48,6 +49,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import dev.utils.app.AppUtils.getPackageManager
 import kotlinx.coroutines.launch
 import me.bmax.apatch.APApplication
 import me.bmax.apatch.Natives
@@ -60,7 +62,8 @@ import me.bmax.apatch.ui.component.pinnedScrollBehavior
 import me.bmax.apatch.ui.viewmodel.SuperUserViewModel
 import me.bmax.apatch.util.PkgConfig
 
-
+private val pm: PackageManager
+    get() = getPackageManager()
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<RootGraph>
 @Composable
@@ -164,8 +167,10 @@ private fun AppItem(
         headlineContent = { Text(app.label) },
         leadingContent = {
             AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current).data(app.packageInfo)
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(app.applicationInfo.loadIcon(pm))
                     .crossfade(true).build(),
+                
                 contentDescription = app.label,
                 modifier = Modifier
                     .padding(4.dp)
