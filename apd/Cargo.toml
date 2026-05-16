@@ -42,6 +42,7 @@ getopts = "0.2"
 errno = "0.3.14"
 notify = "8.2"
 signal-hook = "0.4"
+regex-lite = "0.1.9"
 
 [target.'cfg(any(target_os = "android", target_os = "linux"))'.dependencies]
 rustix = { version = "1", features = ["all-apis"] }
@@ -49,7 +50,8 @@ rustix = { version = "1", features = ["all-apis"] }
 android-properties = { version = "0.2.2", features = ["bionic-deprecated"] }
 procfs = "0.18"
 loopdev = { git = "https://github.com/AndroidPatch/loopdev" }
-
+prop-rs-android = { git = "https://github.com/Kernel-SU/ksu_props" }
+policy = {git = "https://github.com/AndroidPatch/ap_policy"}
 [target.'cfg(target_os = "android")'.dependencies]
 android_logger = { version = "0.15", default-features = false }
 

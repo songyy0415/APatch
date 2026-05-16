@@ -14,7 +14,6 @@ import androidx.lifecycle.MutableLiveData
 import com.topjohnwu.superuser.CallbackList
 import me.bmax.apatch.ui.CrashHandleActivity
 import me.bmax.apatch.util.APatchCli
-import me.bmax.apatch.util.APatchKeyHelper
 import me.bmax.apatch.util.Version
 import me.bmax.apatch.util.getRootShell
 import me.bmax.apatch.util.rootShellForResult
@@ -137,10 +136,11 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler {
                 "ln -s $APD_PATH $APD_LINK_PATH",
                 "restorecon $APD_PATH",
 
-                "cp -f ${nativeDir}/libmagiskpolicy.so $MAGISKPOLICY_BIN_PATH",
-                "chmod +x $MAGISKPOLICY_BIN_PATH",
-                "cp -f ${nativeDir}/libresetprop.so $RESETPROP_BIN_PATH",
-                "chmod +x $RESETPROP_BIN_PATH",
+                "rm -f $MAGISKPOLICY_BIN_PATH",
+                "ln -s $APD_PATH $MAGISKPOLICY_BIN_PATH",
+                "rm -f $RESETPROP_BIN_PATH",
+                "ln -s $APD_PATH $RESETPROP_BIN_PATH",
+               
                 "cp -f ${nativeDir}/libbusybox.so $BUSYBOX_BIN_PATH",
                 "chmod +x $BUSYBOX_BIN_PATH",
                 "cp -f ${nativeDir}/libkptools.so $KPTOOLS_BIN_PATH",
@@ -184,8 +184,6 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler {
                     if (ready) State.ANDROIDPATCH_NOT_INSTALLED else State.UNKNOWN_STATE
                 Log.d(TAG, "state: " + _kpStateLiveData.value)
                 if (!ready) return
-
-                APatchKeyHelper.writeSPSuperKey(value)
 
                 thread {
                     val rc = Natives.su(0, null)
@@ -270,8 +268,7 @@ class APApplication : Application(), Thread.UncaughtExceptionHandler {
         // TODO: 1. make me root by kernel
         // TODO: 2. remove all usage of superkey
         sharedPreferences = getSharedPreferences(SP_NAME, Context.MODE_PRIVATE)
-        APatchKeyHelper.setSharedPreferences(sharedPreferences)
-        superKey = APatchKeyHelper.readSPSuperKey()
+        superKey = "su"
 
         okhttpClient =
             OkHttpClient.Builder().cache(Cache(File(cacheDir, "okhttp"), 10 * 1024 * 1024))
